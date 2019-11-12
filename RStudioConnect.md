@@ -171,14 +171,25 @@ libv8-dev
 
 RStudio Connect is controlled by the `/etc/rstudio-connect/rstudio-connect.gcfg` configuration file. You will edit this file to make server-wide configuration changes to the system.
 
-Make the following initial settings to this file to set up email and AD.
+Make the following initial settings to this file to set up email, AD, and suppress warnings about insecure connections (site is running over HTTP on Horizons internal network - best practice would be to set up HTTPS).
 
 ### 4.1 Email
 
 Set SenderEmail to the service desk email.
 
+`[Server]`
+`SenderEmail = servicedesk@horizons.govt.nz`
+
+-----
+
+Restart RStudio Connect after altering the rstudio-connect.gcfg configuration file.
+
+
 ### 4.2 Active Directory
 Adding LDAP authentication is done through setting `Provider  = ldap` under the `[Authentication]` section of the config file.
+
+`[Authentication]`
+`Provider  = ldap`
 
 LDAP settings were obtained from IT, and stored in 1Password - search for zRStudioLDAP. Copy these settings to any new instance of RStudio Connect.
 
@@ -187,6 +198,16 @@ LDAP settings were obtained from IT, and stored in 1Password - search for zRStud
 Restart RStudio Connect after altering the rstudio-connect.gcfg configuration file.
 
 `sudo systemctl restart rstudio-connect`
+
+### 4.3 Warning about insecure HTTP connection
+Running RStudio Connect over HTTP, as opposed to HTTPS, results in a red status bar appearing on login. To prevent this message from appearing, add the `NoWarning` setting to the `[HTTP]` part of the config file:
+
+`[HTTP]`
+`NoWarning = true`
+
+-----
+
+Restart RStudio Connect after altering the rstudio-connect.gcfg configuration file.
 
 ## 5. Activate License
 
