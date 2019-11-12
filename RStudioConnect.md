@@ -15,6 +15,7 @@
 - [ ] Edit RStudio Connect config file
 - [ ] Test deployment
 - [ ] Adding the HilltopServer package
+- [ ] Adding reverse proxy
 
 ## 1. Install R
 Administrators of the RStudioConnect box should install the versions of R that they wish to support from source so that user content is run in an environment as close as possible to the development environment. This allows maintenance of multiple versions of R simultaneously and mitigates the risk associated with updating the version of R.
@@ -224,18 +225,68 @@ sudo systemctl restart rstudio-connect
 
 ## 6. Production Configuration Settings
 
-### 6.1 Reverse Proxy - nginx
+### 6.1 Reverse Proxy
 
 The default port for RStudio Connect is :3939. This is an issue on the internal wireless network, as only traffic on ports 80, 8080 and 443 are allowed through. The impact of this is that wireless devices cannot connect to RStudio Connect directly, and must use a remote desktop client instead.
 
-To resolve this, a reverse proxy (nginx, apache) can be configured on the Ubuntu box to redirect from port :3939 to port :80. My preference is to use nginx.
+To resolve this, a reverse proxy (Nginx, Apache) can be configured on the Ubuntu box to redirect from port :3939 to port :80. My preference is to use nginx.
 
 
-### 6.2 Setting up nginx
+### 6.2 Setting up Nginx
 
+These notes are taken directly from the RStudion Connect documentation.
 
+On Ubuntu, a version of Nginx that supports reverse-proxying can be installed using the following command:
 
+``` console
+sudo apt-get install nginx
+```
 
+The configuration file below lets Nginx act as a reverse proxy to RStudio Connect. The configuration does no path rewriting; all requests beneath `http://rsconnect.horizons.govt.nz` are routed to Connect. 
+
+The incoming request URI is communicated to Connect using the X-RSC-Request header.
+
+This configuration assumes that RStudio Connect running on the same server as the Nginx proxy and listening on port 3939. 
+
+To edit the config file:
+``` console
+sudo nano /etc/nginx/nginx.conf
+```
+
+``` console
+http {
+  map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+  }
+  server {
+    listen 80;
+
+    client_max_body_size 0; # Disables checking of client request body size
+
+    location / {
+      proxy_set_header X-RSC-Request $scheme://$host:$server_port$request_uri;
+      proxy_pass http://localhost:3939;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection $connection_upgrade;
+      proxy_http_version 1.1;
+      proxy_buffering off; # Required for XHR-streaming
+    }
+  }
+}
+
+```
+
+Restart Nginx after any configuration change.
+
+`sudo systemctl restart nginx`
+
+or
+
+``` console
+sudo systemctl stop nginx
+sudo systemctl start nginx
+```
 
 ## 7. Setting up HilltopServer package
 HilltopServer is a proprietery software package that handles requests for timeseries data. Accessing timeseries data through HilltopServer is a necessary capability for Horizons.
