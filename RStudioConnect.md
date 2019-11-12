@@ -177,8 +177,10 @@ Make the following initial settings to this file to set up email, AD, and suppre
 
 Set SenderEmail to the service desk email.
 
-`[Server]`
-`SenderEmail = servicedesk@horizons.govt.nz`
+``` console
+[Server]
+SenderEmail = servicedesk@horizons.govt.nz
+```
 
 -----
 
@@ -188,8 +190,10 @@ Restart RStudio Connect after altering the rstudio-connect.gcfg configuration fi
 ### 4.2 Active Directory
 Adding LDAP authentication is done through setting `Provider  = ldap` under the `[Authentication]` section of the config file.
 
-`[Authentication]`
-`Provider  = ldap`
+``` console
+[Authentication]
+Provider  = ldap
+```
 
 LDAP settings were obtained from IT, and stored in 1Password - search for zRStudioLDAP. Copy these settings to any new instance of RStudio Connect.
 
@@ -202,8 +206,10 @@ Restart RStudio Connect after altering the rstudio-connect.gcfg configuration fi
 ### 4.3 Warning about insecure HTTP connection
 Running RStudio Connect over HTTP, as opposed to HTTPS, results in a red status bar appearing on login. To prevent this message from appearing, add the `NoWarning` setting to the `[HTTP]` part of the config file:
 
-`[HTTP]`
-`NoWarning = true`
+``` console
+[HTTP]
+NoWarning = true
+```
 
 -----
 
@@ -216,7 +222,20 @@ sudo /opt/rstudio-connect/bin/license-manager activate <license code>
 sudo systemctl restart rstudio-connect
 ```
 
-## 6. Production Configuration Settings 
+## 6. Production Configuration Settings
+
+### 6.1 Reverse Proxy - nginx
+
+The default port for RStudio Connect is :3939. This is an issue on the internal wireless network, as only traffic on ports 80, 8080 and 443 are allowed through. The impact of this is that wireless devices cannot connect to RStudio Connect directly, and must use a remote desktop client instead.
+
+To resolve this, a reverse proxy (nginx, apache) can be configured on the Ubuntu box to redirect from port :3939 to port :80. My preference is to use nginx.
+
+
+### 6.2 Setting up nginx
+
+
+
+
 
 ## 7. Setting up HilltopServer package
 HilltopServer is a proprietery software package that handles requests for timeseries data. Accessing timeseries data through HilltopServer is a necessary capability for Horizons.
