@@ -17,10 +17,30 @@
 - [ ] Adding the HilltopServer package
 - [ ] Adding reverse proxy
 
+
+
 ## 1. Install R
 Administrators of the RStudioConnect box should install the versions of R that they wish to support from source so that user content is run in an environment as close as possible to the development environment. This allows maintenance of multiple versions of R simultaneously and mitigates the risk associated with updating the version of R.
 
-Ensure that the `src` URI's in `sources.list` are uncommmented, as various libraries and packages will need to be built from source. Without this, the `sudo apt-get build-dep` will error.
+Add GPG Key: logged into your Ubuntu 18.04 server as a sudo non-root user, add the relevant GPG key.
+
+```console
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+```
+
+Add the R repository
+```console
+sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/'
+```
+If you’re not using 18.04, find the relevant repository from the R Project Ubuntu list, named for each release.
+
+Update Package Lists
+``` console
+sudo apt update
+sudo apt upgrade
+```
+
+Ensure that the `src` URI's in `/etc/apt/sources.list` are uncommmented, as various libraries and packages will need to be built from source. Without this, the `sudo apt-get build-dep` will error.
 
 To build R from source, first, acquire the build dependencies for R.
 
