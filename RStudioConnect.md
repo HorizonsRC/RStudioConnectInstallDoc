@@ -121,7 +121,7 @@ Typically, the following commands at the console will do the trick:
 
 ```console
 sudo apt-get install build-essential libcurl4-gnutls-dev libxml2-dev libssl-dev texlive-full libblas-dev libudunits2-dev libgdal-dev
-sudo apt-get libpack-dev
+sudo apt-get install libpack-dev
 # sudo apt install openjdk-11-jdk ## This was already installed on production environment
 sudo R CMD javareconf
 ```
