@@ -6,7 +6,7 @@
 |Privileges|sudo|
 |Reference| [RStudio Connect: Admin Guide](https://docs.rstudio.com/connect/admin/index.html)|
 |Compiled by|Sean Hodges|
-|Last updated|2019-06-15|
+|Last updated|2019-11-13|
 ## Checklist
 
 - [ ] Install R
